@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { LivroController } from './livro.controller';
 
-@Module({})
+@Module({
+  controllers: [LivroController]
+})
 export class LivroModule {}
