@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Usuario } from './schemas/usuario.schema';
 
 @Injectable()
 export class UsuariosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@InjectModel('Usuario') private readonly usuarioModel: Model<Usuario>) {}
 
-  async criarUsuario(data: { nome: string; email: string; preferencias: string }) {
-    return this.prisma.usuario.create({
-      data,
-    });
+  async criarUsuario(data: { nome: string; email: string; preferencias: string[] }): Promise<Usuario> {
+    const usuario = new this.usuarioModel(data);
+    return usuario.save();
   }
 
-  async listarUsuarios() {
-    return this.prisma.usuario.findMany();
+  async listarUsuarios(): Promise<Usuario[]> {
+    return this.usuarioModel.find().exec();
+  }
+
+  async buscarUsuarioPorId(id: string): Promise<Usuario> {
+    return this.usuarioModel.findById(id).exec();
   }
 }

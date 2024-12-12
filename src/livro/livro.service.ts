@@ -1,42 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { Livro } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Livro } from './schemas/livro.schema';
 
 @Injectable()
 export class LivrosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(@InjectModel('Livro') private readonly livroModel: Model<Livro>) {}
 
-  // Criar um livro
   async criarLivro(data: { titulo: string; autor: string; genero: string; descricao: string }): Promise<Livro> {
-    return this.prisma.livro.create({
-      data,
-    });
+    const livro = new this.livroModel(data);
+    return livro.save();
   }
 
-  // Listar todos os livros
   async listarLivros(): Promise<Livro[]> {
-    return this.prisma.livro.findMany();
+    return this.livroModel.find().exec();
   }
 
-  // Buscar livros por título
   async buscarPorTitulo(titulo: string): Promise<Livro[]> {
-    return this.prisma.livro.findMany({
-      where: {
-        titulo: {
-          contains: titulo, 
-        },
-      },
-    });
+    return this.livroModel.find({ titulo: { $regex: titulo, $options: 'i' } }).exec();
   }
 
-  // Buscar livros por gênero
   async buscarPorGenero(genero: string): Promise<Livro[]> {
-    return this.prisma.livro.findMany({
-      where: {
-        genero: {
-          contains: genero, 
-        },
-      },
-    });
+    return this.livroModel.find({ genero }).exec();
   }
 }
