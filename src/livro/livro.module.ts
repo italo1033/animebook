@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
-import { LivrosService } from './livro.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { LivrosController } from './livro.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { LivrosService } from './livro.service';
+import { Livro, LivroSchema } from './schemas/livro.schema';
 
 @Module({
-  imports: [PrismaModule], // Importa o PrismaModule
+  imports: [
+    MongooseModule.forFeature([{ name: 'Livro', schema: LivroSchema }]),
+  ],
   controllers: [LivrosController],
   providers: [LivrosService],
+  exports: [LivrosService], 
 })
-export class LivrosModule {}
+export class LivroModule {}
