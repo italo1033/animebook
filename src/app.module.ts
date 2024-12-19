@@ -7,7 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://is8:jPEhsgwgY3Y3r2r5@cluster0.bgwxo.mongodb.net/'), // Conexão com MongoDB
+    MongooseModule.forRoot('mongodb+srv://is8:jPEhsgwgY3Y3r2r5@cluster0.bgwxo.mongodb.net/animebook'), // Conexão com MongoDB
     UsuariosModule, 
     LivroModule, 
     AvaliacaoModule,
