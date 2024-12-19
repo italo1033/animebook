@@ -20,7 +20,7 @@ model Livro {
   titulo      String
   autor       String
   genero      String
-  descricao   String
+  descricao   String @db.VarChar(500)
   avaliacoes  Avaliacao[]
 }
 
