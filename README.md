@@ -1,85 +1,69 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Relatório de Desempenho: MySQL vs MongoDB
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este relatório compara o desempenho de duas bases de dados populares, **MySQL** e **MongoDB**, com base em testes de operações típicas de leitura e escrita. O objetivo é analisar a eficiência de cada sistema em diferentes cenários de uso, levando em consideração o número de operações por segundo (ops/sec) e a ocorrência de erros relacionados à alocação de memória no MongoDB.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Desempenho do MySQL
 
-## Description
+O MySQL apresentou os seguintes resultados para suas operações:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Operação                         | Ops/sec         |
+|-----------------------------------|-----------------|
+| Livros                            | 402 ops/sec     |
+| Buscar Livro por Título           | 1,260 ops/sec   |
+| Listar Usuários                   | 96.6 ops/sec    |
+| Listar Avaliações por Livro       | 1,472 ops/sec   |
+| Criar Livro                       | 205 ops/sec     |
 
-## Project setup
+### Análise do MySQL
+- **Melhor desempenho**: A operação que mais se destacou foi **Listar Avaliações por Livro**, com 1,472 operações por segundo, sendo a mais rápida entre as testadas no MySQL.
+- **Desempenho geral**: O MySQL demonstrou uma boa capacidade de realizar operações de busca e criação, mas seu desempenho é mais modesto em comparação com o MongoDB, especialmente em operações simples como consultas a livros e avaliações.
 
-```bash
-$ npm install
-```
+## Desempenho do MongoDB
 
-## Compile and run the project
+Para o MongoDB, os testes mostraram os seguintes resultados:
 
-```bash
-# development
-$ npm run start
+| Operação                         | Ops/sec         |
+|-----------------------------------|-----------------|
+| Consulta - Livros                 | 49,399 ops/sec  |
+| Consulta - Avaliações             | 11,044 ops/sec  |
 
-# watch mode
-$ npm run start:dev
+### Análise do MongoDB
+- **Excelente desempenho nas consultas**: O MongoDB se destacou nas consultas, especialmente na operação de **Consulta - Livros**, com um número impressionante de 49,399 operações por segundo, muito superior ao desempenho do MySQL.
+- **Desempenho em Avaliações**: A operação de **Consulta - Avaliações** também teve um bom desempenho, com 11,044 operações por segundo, embora ainda fique abaixo do desempenho nas consultas a livros.
+- **Problemas de memória**: Durante os testes, o MongoDB apresentou um erro crítico de memória, indicando que o sistema atingiu o limite de memória disponível para a alocação de dados. O erro de memória foi descrito como **"FATAL ERROR: Reached heap limit - Allocation failed"**. Isso pode ser um fator limitante para o uso do MongoDB em cenários de grande volume de dados ou consultas pesadas.
 
-# production mode
-$ npm run start:prod
-```
+## Comparação de Desempenho
 
-## Run tests
+### Desempenho em operações simples
+| Sistema  | Operação                           | Ops/sec       |
+|----------|-------------------------------------|---------------|
+| **MySQL**| Livros                              | 402 ops/sec   |
+| **MongoDB**| Consulta - Livros                 | 49,399 ops/sec|
 
-```bash
-# unit tests
-$ npm run test
+- O **MongoDB** teve um desempenho muito superior no que diz respeito às consultas a livros, alcançando quase 50 mil operações por segundo, enquanto o MySQL obteve apenas 402 operações por segundo na mesma operação.
+- **Listar Avaliações por Livro** foi a operação mais rápida no MySQL, mas, mesmo assim, o MongoDB se destacou ainda mais em termos de volume de operações para consultas gerais.
 
-# e2e tests
-$ npm run test:e2e
+### Desempenho em operações complexas (criação e listagem)
 
-# test coverage
-$ npm run test:cov
-```
+| Sistema  | Operação                           | Ops/sec       |
+|----------|-------------------------------------|---------------|
+| **MySQL**| Criar Livro                         | 205 ops/sec   |
+| **MongoDB**| Consulta - Avaliações             | 11,044 ops/sec|
 
-## Resources
+- O **MySQL** teve um desempenho razoável em operações de criação de dados (como "Criar Livro"), mas a diferença em operações de leitura foi marcante, com o MongoDB se saindo melhor em consultas complexas, como a de avaliações.
 
-Check out a few resources that may come in handy when working with NestJS:
+### Problemas de memória no MongoDB
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- Um ponto importante observado foi que o MongoDB falhou ao tentar alocar mais memória, resultando em um erro de "heap overflow". Esse problema pode ser crítico em ambientes de grande escala, onde a memória disponível para o sistema é insuficiente para o processamento de grandes volumes de dados ou consultas complexas. O MySQL não apresentou esse tipo de falha durante os testes.
 
-## Support
+## Conclusão
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### MySQL
+- O MySQL se mostrou eficiente para operações de criação e consulta simples, com bom desempenho geral. A operação de **Listar Avaliações por Livro** foi a mais rápida.
+- No entanto, quando se trata de consultas de grande volume, como as de livros e avaliações, o MySQL fica atrás do MongoDB.
 
-## Stay in touch
+### MongoDB
+- O MongoDB teve um desempenho impressionante, especialmente em consultas a grandes volumes de dados, com resultados muito superiores ao MySQL nas operações de consulta.
+- O grande desafio do MongoDB é o erro de memória identificado durante os testes, que pode afetar seu desempenho em sistemas com grandes volumes de dados ou com necessidade de alocação intensiva de memória.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Em resumo, o MongoDB é mais eficiente em consultas de leitura, especialmente em volumes grandes de dados, enquanto o MySQL se sai melhor em operações mais simples, sem grandes necessidades de memória. O MongoDB, no entanto, requer cuidados com a gestão de memória para evitar falhas em ambientes de alto desempenho.
