@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb'; a
+import { MongoClient } from 'mongodb';
 const Benchmark = require('benchmark'); 
 
 async function runBenchmark() {
